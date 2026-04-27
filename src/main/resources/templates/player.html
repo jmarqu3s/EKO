@@ -8,63 +8,91 @@
 </head>
 <body class="player-page">
 
-    <header class="topbar">
-        <a href="/" class="logo">EKO</a>
-        <span class="track-count" th:text="${videos != null ? videos.size() + ' músicas' : ''}"></span>
-    </header>
-
-    <!-- Erro -->
     <div th:if="${error}" class="error-message">
         <p th:text="${error}"></p>
-        <a href="/">Voltar</a>
+        <a href="/">&#8592; Voltar</a>
     </div>
 
-    <!-- Player principal -->
-    <div th:if="${videos != null and !videos.isEmpty()}" class="player-layout">
+    <div th:if="${videos != null and !videos.isEmpty()}" id="app">
 
-        <!-- Painel esquerdo: player + controles -->
-        <div class="player-main">
-            <div class="video-wrapper">
-                <div id="youtube-player"></div>
-            </div>
+        <!-- ÁREA PRINCIPAL: vídeo + fila -->
+        <div class="main-area">
 
-            <div class="now-playing">
-                <img id="current-thumb" src="" alt="thumbnail" class="current-thumb">
-                <div class="current-info">
-                    <p id="current-title" class="current-title">Selecione uma música</p>
-                    <p id="current-channel" class="current-channel"></p>
+            <!-- Vídeo -->
+            <div class="video-section">
+                <div class="video-wrapper">
+                    <div id="youtube-player"></div>
                 </div>
             </div>
 
-            <div class="controls">
-                <button onclick="prevTrack()" class="ctrl-btn" title="Anterior">&#9664;&#9664;</button>
-                <button onclick="togglePlay()" class="ctrl-btn ctrl-main" id="btn-play" title="Play/Pause">&#9654;</button>
-                <button onclick="nextTrack()" class="ctrl-btn" title="Próximo">&#9654;&#9654;</button>
-                <button onclick="toggleShuffle()" class="ctrl-btn" id="btn-shuffle" title="Aleatório">&#8646;</button>
+            <!-- Fila -->
+            <div class="queue-section">
+                <div class="queue-header">
+                    <a href="/" class="logo">EKO</a>
+                    <span class="track-count" th:text="${videos.size() + ' faixas'}"></span>
+                </div>
+                <ul class="track-list" id="track-list">
+                    <li th:each="video, stat : ${videos}"
+                        th:data-video-id="${video.videoId}"
+                        th:data-title="${video.title}"
+                        th:data-channel="${video.channelTitle}"
+                        th:data-thumb="${video.thumbnailUrl}"
+                        th:data-index="${stat.index}"
+                        class="track-item"
+                        onclick="playTrack(this)">
+                        <span class="track-number" th:text="${stat.index + 1}"></span>
+                        <img th:src="${video.thumbnailUrl}" th:alt="${video.title}" class="track-thumb">
+                        <div class="track-info">
+                            <p class="track-title" th:text="${video.title}"></p>
+                            <p class="track-channel" th:text="${video.channelTitle}"></p>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <!-- Painel direito: fila de músicas -->
-        <div class="queue-panel">
-            <h2 class="queue-title">Fila de reprodução</h2>
-            <ul class="track-list" id="track-list">
-                <li th:each="video, stat : ${videos}"
-                    th:data-video-id="${video.videoId}"
-                    th:data-title="${video.title}"
-                    th:data-channel="${video.channelTitle}"
-                    th:data-thumb="${video.thumbnailUrl}"
-                    th:data-index="${stat.index}"
-                    class="track-item"
-                    onclick="playTrack(this)">
-                    <span class="track-number" th:text="${stat.index + 1}"></span>
-                    <img th:src="${video.thumbnailUrl}" th:alt="${video.title}" class="track-thumb">
-                    <div class="track-info">
-                        <p class="track-title" th:text="${video.title}"></p>
-                        <p class="track-channel" th:text="${video.channelTitle}"></p>
-                    </div>
-                </li>
-            </ul>
+        <!-- BARRA INFERIOR DE CONTROLES -->
+        <div class="player-bar">
+            <!-- Info da música atual -->
+            <div class="bar-info">
+                <img id="bar-thumb" src="" alt="" class="bar-thumb">
+                <div class="bar-text">
+                    <p id="bar-title" class="bar-title">—</p>
+                    <p id="bar-channel" class="bar-channel"></p>
+                </div>
+            </div>
+
+            <!-- Controles centrais -->
+            <div class="bar-controls">
+                <button onclick="toggleShuffle()" class="bar-btn" id="btn-shuffle" title="Aleatório">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                        <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+                    </svg>
+                </button>
+                <button onclick="prevTrack()" class="bar-btn" title="Anterior">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                    </svg>
+                </button>
+                <button onclick="togglePlay()" class="bar-btn bar-btn-main" id="btn-play" title="Play/Pause">
+                    <svg id="icon-play" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="icon-pause" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" style="display:none">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                </button>
+                <button onclick="nextTrack()" class="bar-btn" title="Próximo">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Espaço direito (futuras funcionalidades) -->
+            <div class="bar-right"></div>
         </div>
+
     </div>
 
     <script th:inline="javascript">
