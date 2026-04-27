@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO Player</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+
+    <div class="home-container">
+        <div class="logo-area">
+            <h1 class="logo">EKO</h1>
+            <p class="tagline">Sua playlist do YouTube, sem distrações</p>
+        </div>
+
+        <form action="/playlist" method="post" class="search-form">
+            <div class="input-group">
+                <input
+                    type="text"
+                    name="url"
+                    placeholder="Cole o link da sua playlist do YouTube..."
+                    required
+                    class="playlist-input"
+                />
+                <button type="submit" class="btn-play">
+                    Carregar
+                </button>
+            </div>
+            <p class="hint">Exemplo: https://www.youtube.com/playlist?list=PLxxxxx</p>
+        </form>
+    </div>
+
+</body>
+</html>

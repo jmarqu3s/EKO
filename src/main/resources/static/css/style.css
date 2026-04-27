@@ -1,0 +1,310 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0f0f0f;
+    color: #e0e0e0;
+}
+
+/* ── HOME ── */
+.home-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.home-container {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem;
+}
+
+.logo {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 8px;
+    color: #ff4444;
+    text-decoration: none;
+}
+
+.tagline {
+    color: #888;
+    margin: 0.5rem 0 2.5rem;
+    font-size: 1rem;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.playlist-input {
+    flex: 1;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.playlist-input:focus {
+    border-color: #ff4444;
+}
+
+.btn-play {
+    padding: 0.85rem 1.5rem;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-play:hover {
+    background: #e03333;
+}
+
+.hint {
+    font-size: 0.78rem;
+    color: #555;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.5rem;
+    background: #161616;
+    border-bottom: 1px solid #222;
+}
+
+.topbar .logo {
+    font-size: 1.6rem;
+    letter-spacing: 4px;
+}
+
+.track-count {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+/* ── PLAYER LAYOUT ── */
+.player-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.player-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ── PLAYER MAIN ── */
+.player-main {
+    width: 420px;
+    min-width: 420px;
+    display: flex;
+    flex-direction: column;
+    background: #111;
+    border-right: 1px solid #222;
+    padding: 1.5rem;
+    gap: 1.2rem;
+}
+
+.video-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.now-playing {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.current-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #222;
+}
+
+.current-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+.current-channel {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 2px;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.ctrl-btn {
+    background: #1e1e1e;
+    border: none;
+    color: #ccc;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.ctrl-btn:hover {
+    background: #2a2a2a;
+    color: #fff;
+}
+
+.ctrl-main {
+    background: #ff4444;
+    color: white;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.4rem;
+}
+
+.ctrl-main:hover {
+    background: #e03333;
+    color: white;
+}
+
+.ctrl-btn.active {
+    color: #ff4444;
+}
+
+/* ── QUEUE ── */
+.queue-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #0f0f0f;
+}
+
+.queue-title {
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #555;
+    border-bottom: 1px solid #1e1e1e;
+}
+
+.track-list {
+    list-style: none;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.track-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.track-list::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 1.5rem;
+    cursor: pointer;
+    border-bottom: 1px solid #161616;
+    transition: background 0.15s;
+}
+
+.track-item:hover {
+    background: #1a1a1a;
+}
+
+.track-item.active {
+    background: #1e1212;
+    border-left: 3px solid #ff4444;
+}
+
+.track-number {
+    min-width: 24px;
+    font-size: 0.8rem;
+    color: #555;
+    text-align: center;
+}
+
+.track-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.track-title {
+    font-size: 0.88rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+}
+
+.track-channel {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 2px;
+}
+
+/* ── ERRO ── */
+.error-message {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #888;
+}
+
+.error-message a {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #ff4444;
+    text-decoration: none;
+}
