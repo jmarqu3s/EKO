@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO — Vídeos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="watch-page">
+
+    <div id="watch-app">
+
+        <!-- Vídeo principal -->
+        <div class="watch-video-section">
+            <div class="video-wrapper">
+                <div id="youtube-player"></div>
+            </div>
+        </div>
+
+        <!-- Sidebar direita -->
+        <div class="watch-sidebar">
+            <div class="queue-header">
+                <a href="/" class="logo">EKO</a>
+                <span class="track-count" id="video-count">0 vídeos</span>
+            </div>
+
+            <ul class="track-list" id="video-list"></ul>
+
+            <div class="sidebar-add">
+                <div class="input-group sidebar-input-group">
+                    <input
+                        type="text"
+                        id="add-url-input"
+                        placeholder="Adicionar link..."
+                        class="playlist-input sidebar-input"
+                        onkeydown="if(event.key==='Enter') addVideo()"
+                    />
+                    <button class="btn-play sidebar-btn" onclick="addVideo()">+</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script th:src="@{/js/watch.js}"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+</body>
+</html>

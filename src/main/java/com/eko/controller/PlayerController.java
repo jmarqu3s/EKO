@@ -27,6 +27,11 @@ public class PlayerController {
         return "index";
     }
 
+    @GetMapping("/watch")
+    public String watch() {
+        return "watch";
+    }
+
     @PostMapping("/playlist")
     public String loadPlaylist(@RequestParam("url") String url, Model model) {
         try {

@@ -11,25 +11,77 @@
     <div class="home-container">
         <div class="logo-area">
             <h1 class="logo">EKO</h1>
-            <p class="tagline">Sua playlist do YouTube, sem distrações</p>
+            <p class="tagline">Seu YouTube, sem distrações</p>
         </div>
 
-        <form action="/playlist" method="post" class="search-form">
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="tab-playlist" onclick="setMode('playlist')">Playlist</button>
+            <button class="mode-tab" id="tab-video" onclick="setMode('video')">Vídeos</button>
+        </div>
+
+        <div id="panel-playlist" class="mode-panel">
+            <form action="/playlist" method="post" class="search-form">
+                <div class="input-group">
+                    <input
+                        type="text"
+                        name="url"
+                        placeholder="Cole o link da sua playlist do YouTube..."
+                        required
+                        class="playlist-input"
+                    />
+                    <button type="submit" class="btn-play">Carregar</button>
+                </div>
+                <p class="hint">Exemplo: https://www.youtube.com/playlist?list=PLxxxxx</p>
+            </form>
+        </div>
+
+        <div id="panel-video" class="mode-panel" style="display:none">
             <div class="input-group">
                 <input
                     type="text"
-                    name="url"
-                    placeholder="Cole o link da sua playlist do YouTube..."
-                    required
+                    id="video-url-input"
+                    placeholder="Cole o link do vídeo do YouTube..."
                     class="playlist-input"
+                    onkeydown="if(event.key==='Enter') openVideo()"
                 />
-                <button type="submit" class="btn-play">
-                    Carregar
-                </button>
+                <button class="btn-play" onclick="openVideo()">Assistir</button>
             </div>
-            <p class="hint">Exemplo: https://www.youtube.com/playlist?list=PLxxxxx</p>
-        </form>
+            <p class="hint">Exemplo: https://www.youtube.com/watch?v=dQw4w9WgXcQ</p>
+        </div>
     </div>
+
+    <script>
+        function setMode(mode) {
+            document.getElementById('panel-playlist').style.display = mode === 'playlist' ? 'block' : 'none';
+            document.getElementById('panel-video').style.display   = mode === 'video'    ? 'block' : 'none';
+            document.getElementById('tab-playlist').classList.toggle('active', mode === 'playlist');
+            document.getElementById('tab-video').classList.toggle('active', mode === 'video');
+        }
+
+        function extractVideoId(url) {
+            url = url.trim();
+            var patterns = [
+                /[?&]v=([a-zA-Z0-9_-]{11})/,
+                /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+                /shorts\/([a-zA-Z0-9_-]{11})/
+            ];
+            for (var i = 0; i < patterns.length; i++) {
+                var m = url.match(patterns[i]);
+                if (m) return m[1];
+            }
+            return null;
+        }
+
+        function openVideo() {
+            var url = document.getElementById('video-url-input').value;
+            var id = extractVideoId(url);
+            if (!id) {
+                alert('Link inválido. Cole um link de vídeo do YouTube.');
+                return;
+            }
+            window.location.href = '/watch?v=' + id;
+        }
+    </script>
 
 </body>
 </html>
