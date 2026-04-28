@@ -8,6 +8,8 @@
 </head>
 <body class="player-page">
 
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
     <div th:if="${error}" class="error-message">
         <p th:text="${error}"></p>
         <a href="/">&#8592; Voltar</a>

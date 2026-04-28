@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<div th:fragment="navbar">
+    <nav class="navbar">
+
+        <a href="/" class="logo navbar-logo">EKO</a>
+
+        <div class="navbar-right">
+            <button class="navbar-user-btn" id="navbar-user-btn" onclick="toggleUserMenu()" title="Conta">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                </svg>
+            </button>
+
+            <div class="user-menu" id="user-menu">
+                <div class="user-menu-header">
+                    Olá, <strong sec:authentication="name">usuário</strong>
+                </div>
+                <hr class="user-menu-divider"/>
+                <a href="/history" class="user-menu-item">Histórico</a>
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="user-menu-item user-menu-logout">Sair da conta</button>
+                </form>
+            </div>
+        </div>
+
+    </nav>
+
+    <script>
+        function toggleUserMenu() {
+            document.getElementById('user-menu').classList.toggle('open');
+        }
+
+        document.addEventListener('click', function(e) {
+            var btn  = document.getElementById('navbar-user-btn');
+            var menu = document.getElementById('user-menu');
+            if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    </script>
+</div>
+
+</body>
+</html>
