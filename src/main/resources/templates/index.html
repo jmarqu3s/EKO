@@ -21,6 +21,7 @@
 
         <div id="panel-playlist" class="mode-panel">
             <form action="/playlist" method="post" class="search-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <div class="input-group">
                     <input
                         type="text"

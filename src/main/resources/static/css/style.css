@@ -321,6 +321,59 @@ body {
 /* Lado direito (reservado) */
 .bar-right { width: 280px; }
 
+/* ── AUTH ── */
+.auth-field {
+    margin-bottom: 0.6rem;
+}
+
+.auth-input {
+    width: 100%;
+    border: 1px solid #222;
+    border-radius: 3px;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 3px;
+    margin-top: 0.4rem;
+}
+
+.auth-link {
+    margin-top: 1.2rem;
+    font-size: 0.8rem;
+    color: #444;
+}
+
+.auth-link a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.auth-link a:hover { text-decoration: underline; }
+
+.auth-error {
+    background: #1a0a0a;
+    border: 1px solid #3a1010;
+    color: #e07070;
+    padding: 0.6rem 0.9rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.auth-success {
+    background: #0a1a0a;
+    border: 1px solid #103a10;
+    color: #70c070;
+    padding: 0.6rem 0.9rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
 /* ── MODE TABS (HOME) ── */
 .mode-tabs {
     display: flex;

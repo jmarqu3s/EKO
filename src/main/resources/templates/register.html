@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO — Cadastro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+
+    <div class="home-container">
+        <div class="logo-area">
+            <a href="/" class="logo" style="display:block;margin-bottom:0.5rem">EKO</a>
+            <p class="tagline">Crie sua conta</p>
+        </div>
+
+        <div th:if="${error}" class="auth-error" th:text="${error}"></div>
+
+        <form action="/register" method="post" class="search-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="auth-field">
+                <input type="text" name="name" placeholder="Usuário" required class="playlist-input auth-input"/>
+            </div>
+            <div class="auth-field">
+                <input type="email" name="email" placeholder="E-mail" required class="playlist-input auth-input"/>
+            </div>
+            <div class="auth-field">
+                <input type="password" name="password" placeholder="Senha" required class="playlist-input auth-input"/>
+            </div>
+
+            <button type="submit" class="btn-play btn-full">Criar conta</button>
+        </form>
+
+        <p class="auth-link">Já tem conta? <a href="/login">Entrar</a></p>
+    </div>
+
+</body>
+</html>
