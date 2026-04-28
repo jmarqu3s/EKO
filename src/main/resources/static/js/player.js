@@ -13,9 +13,27 @@ function onYouTubeIframeAPIReady() {
             modestbranding: 1
         },
         events: {
+            onReady: onPlayerReady,
             onStateChange: onPlayerStateChange
         }
     });
+}
+
+function onPlayerReady() {
+    const first = document.querySelector('[data-index="0"]');
+    if (!first) return;
+
+    currentIndex = 0;
+    first.classList.add('active');
+    first.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    updateBarInfo({
+        title: first.dataset.title,
+        channel: first.dataset.channel,
+        thumb: first.dataset.thumb
+    });
+
+    player.cueVideoById(first.dataset.videoId);
 }
 
 function playTrack(el) {
