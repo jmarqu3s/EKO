@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO — Histórico</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="history-page">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="history-container">
+        <h1 class="history-title">Histórico de exibição</h1>
+
+        <!-- Playlists -->
+        <section class="history-section" th:if="${playlists != null and !playlists.isEmpty()}">
+            <h2 class="history-section-title">Playlists</h2>
+            <div class="history-grid">
+                <a th:each="pl : ${playlists}"
+                   th:href="@{/playlist/{id}(id=${pl.playlistId})}"
+                   class="history-card">
+                    <div class="history-card-thumb-wrap">
+                        <img th:src="${pl.thumbnailUrl}" alt="" class="history-card-thumb">
+                        <span class="history-card-badge"
+                              th:text="${pl.videoCount + (pl.videoCount == 1 ? ' vídeo' : ' vídeos')}"></span>
+                    </div>
+                    <div class="history-card-info">
+                        <p class="history-card-label">Playlist</p>
+                        <p class="history-card-date"
+                           th:text="${#temporals.format(pl.accessedAt, 'dd/MM/yyyy HH:mm')}"></p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Vídeos -->
+        <section class="history-section" th:if="${videos != null and !videos.isEmpty()}">
+            <h2 class="history-section-title">Vídeos</h2>
+            <div class="history-grid">
+                <a th:each="v : ${videos}"
+                   th:href="@{/watch(v=${v.videoId})}"
+                   class="history-card">
+                    <div class="history-card-thumb-wrap">
+                        <img th:src="${v.thumbnailUrl}" th:alt="${v.title}" class="history-card-thumb">
+                    </div>
+                    <div class="history-card-info">
+                        <p class="history-card-title" th:text="${v.title}"></p>
+                        <p class="history-card-channel" th:text="${v.channelTitle}"></p>
+                        <p class="history-card-date"
+                           th:text="${#temporals.format(v.watchedAt, 'dd/MM/yyyy HH:mm')}"></p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Estado vazio -->
+        <div class="history-empty"
+             th:if="${(videos == null or videos.isEmpty()) and (playlists == null or playlists.isEmpty())}">
+            <p>Nenhum histórico ainda.</p>
+            <a href="/">Começar a assistir</a>
+        </div>
+    </div>
+
+</body>
+</html>

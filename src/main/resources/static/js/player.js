@@ -52,6 +52,22 @@ function playTrack(el) {
 
     player.loadVideoById(el.dataset.videoId);
     setPlayIcon(false);
+    saveVideoHistory(el.dataset.videoId, el.dataset.title, el.dataset.channel, el.dataset.thumb);
+}
+
+function saveVideoHistory(videoId, title, channelTitle, thumbnailUrl) {
+    const csrfMeta = document.querySelector('meta[name="_csrf"]');
+    const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+    if (!csrfMeta || !csrfHeaderMeta) return;
+
+    const headers = { 'Content-Type': 'application/json' };
+    headers[csrfHeaderMeta.content] = csrfMeta.content;
+
+    fetch('/history/video', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ videoId, title, channelTitle, thumbnailUrl })
+    }).catch(() => {});
 }
 
 function updateBarInfo(video) {

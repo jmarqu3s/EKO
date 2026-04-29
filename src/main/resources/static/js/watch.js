@@ -59,10 +59,29 @@ function addToQueue(videoId) {
     queue.push(videoId);
     renderItem(videoId, index);
     updateCount();
+    saveVideoHistory(videoId);
 
     if (queue.length === 1) {
         loadVideo(0);
     }
+}
+
+function saveVideoHistory(videoId) {
+    var csrfMeta = document.querySelector('meta[name="_csrf"]');
+    var csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+    if (!csrfMeta || !csrfHeaderMeta) return;
+
+    var headers = { 'Content-Type': 'application/json' };
+    headers[csrfHeaderMeta.content] = csrfMeta.content;
+
+    fetch('/history/video', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+            videoId: videoId,
+            thumbnailUrl: 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg'
+        })
+    }).catch(function() {});
 }
 
 function loadVideo(index) {

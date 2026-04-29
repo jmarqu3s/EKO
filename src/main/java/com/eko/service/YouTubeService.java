@@ -139,6 +139,29 @@ public class YouTubeService {
         return false;
     }
 
+    public VideoItem getVideoInfo(String videoId) throws Exception {
+        String url = UriComponentsBuilder.fromHttpUrl(VIDEOS_URL)
+            .queryParam("part", "snippet")
+            .queryParam("id", videoId)
+            .queryParam("key", apiKey)
+            .toUriString();
+
+        String response = restTemplate.getForObject(url, String.class);
+        JsonNode root = mapper.readTree(response);
+        JsonNode items = root.path("items");
+
+        if (!items.isArray() || !items.elements().hasNext()) {
+            return new VideoItem(videoId, "", "", "https://img.youtube.com/vi/" + videoId + "/mqdefault.jpg");
+        }
+
+        JsonNode snippet = items.get(0).path("snippet");
+        String title = snippet.path("title").asText();
+        String channel = snippet.path("channelTitle").asText();
+        String thumbnail = snippet.path("thumbnails").path("medium").path("url").asText();
+
+        return new VideoItem(videoId, title, channel, thumbnail);
+    }
+
     public String extractPlaylistId(String url) {
         String id;
         if (url.contains("list=")) {
