@@ -1,6 +1,7 @@
 let player;
 let currentIndex = 0;
 let shuffleOn = false;
+let originalData = [...videosData];
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('youtube-player', {
@@ -75,12 +76,7 @@ function togglePlay() {
 }
 
 function nextTrack() {
-    let next;
-    if (shuffleOn) {
-        next = Math.floor(Math.random() * videosData.length);
-    } else {
-        next = (currentIndex + 1) % videosData.length;
-    }
+    const next = (currentIndex + 1) % videosData.length;
     const el = document.querySelector(`[data-index="${next}"]`);
     if (el) playTrack(el);
 }
@@ -91,9 +87,82 @@ function prevTrack() {
     if (el) playTrack(el);
 }
 
+function fisherYatesShuffle(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function renderTrackList(data) {
+    const currentVideoId = videosData[currentIndex] ? videosData[currentIndex].videoId : null;
+    const list = document.getElementById('track-list');
+    list.innerHTML = '';
+    let activeEl = null;
+
+    data.forEach((video, i) => {
+        const li = document.createElement('li');
+        li.className = 'track-item';
+        li.dataset.videoId = video.videoId;
+        li.dataset.title = video.title;
+        li.dataset.channel = video.channel;
+        li.dataset.thumb = video.thumb;
+        li.dataset.index = i;
+        li.onclick = function() { playTrack(this); };
+
+        const num = document.createElement('span');
+        num.className = 'track-number';
+        num.textContent = i + 1;
+
+        const img = document.createElement('img');
+        img.src = video.thumb;
+        img.alt = video.title;
+        img.className = 'track-thumb';
+
+        const info = document.createElement('div');
+        info.className = 'track-info';
+
+        const title = document.createElement('p');
+        title.className = 'track-title';
+        title.textContent = video.title;
+
+        const channel = document.createElement('p');
+        channel.className = 'track-channel';
+        channel.textContent = video.channel;
+
+        info.appendChild(title);
+        info.appendChild(channel);
+        li.appendChild(num);
+        li.appendChild(img);
+        li.appendChild(info);
+
+        if (video.videoId === currentVideoId) {
+            li.classList.add('active');
+            currentIndex = i;
+            activeEl = li;
+        }
+
+        list.appendChild(li);
+    });
+
+    videosData = data;
+
+    if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
 function toggleShuffle() {
     shuffleOn = !shuffleOn;
     document.getElementById('btn-shuffle').classList.toggle('active', shuffleOn);
+
+    if (shuffleOn) {
+        renderTrackList(fisherYatesShuffle(originalData));
+    } else {
+        renderTrackList([...originalData]);
+    }
 }
 
 function onPlayerStateChange(event) {
