@@ -1,6 +1,5 @@
 package com.eko.controller;
 
-import com.eko.model.VideoItem;
 import com.eko.service.YouTubeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 public class PlayerController {
@@ -36,8 +33,9 @@ public class PlayerController {
     public String loadPlaylist(@RequestParam("url") String url, Model model) {
         try {
             String playlistId = youTubeService.extractPlaylistId(url);
-            List<VideoItem> videos = youTubeService.getPlaylistVideos(playlistId);
-            model.addAttribute("videos", videos);
+            var result = youTubeService.getPlaylistVideos(playlistId);
+            model.addAttribute("videos", result.videos());
+            model.addAttribute("hiddenCount", result.hiddenCount());
             model.addAttribute("playlistId", playlistId);
         } catch (Exception e) {
             log.error("Erro ao carregar playlist: {}", e.getMessage(), e);

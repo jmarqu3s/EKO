@@ -224,6 +224,16 @@ body {
     text-overflow: ellipsis;
 }
 
+/* ── VÍDEOS OCULTOS ── */
+.hidden-count-msg {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.72rem;
+    color: #3a3a3a;
+    border-top: 1px solid #161616;
+    text-align: center;
+    flex-shrink: 0;
+}
+
 /* ── BARRA INFERIOR ── */
 .player-bar {
     position: fixed;

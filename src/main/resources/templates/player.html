@@ -50,6 +50,9 @@
                         </div>
                     </li>
                 </ul>
+                <div th:if="${hiddenCount > 0}" class="hidden-count-msg">
+                    <span th:text="${hiddenCount + (hiddenCount == 1 ? ' vídeo indisponível oculto' : ' vídeos indisponíveis ocultos')}"></span>
+                </div>
             </div>
         </div>
 

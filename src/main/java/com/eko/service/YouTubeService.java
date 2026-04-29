@@ -1,5 +1,6 @@
 package com.eko.service;
 
+import com.eko.model.PlaylistResult;
 import com.eko.model.VideoItem;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,8 +28,12 @@ public class YouTubeService {
     private static final String PLAYLIST_ITEMS_URL =
         "https://www.googleapis.com/youtube/v3/playlistItems";
 
-    public List<VideoItem> getPlaylistVideos(String playlistId) throws Exception {
+    private static final String VIDEOS_URL =
+        "https://www.googleapis.com/youtube/v3/videos";
+
+    public PlaylistResult getPlaylistVideos(String playlistId) throws Exception {
         List<VideoItem> videos = new ArrayList<>();
+        int hiddenCount = 0;
         String pageToken = null;
 
         do {
@@ -45,6 +50,9 @@ public class YouTubeService {
             String response = restTemplate.getForObject(builder.toUriString(), String.class);
             JsonNode root = mapper.readTree(response);
 
+            List<VideoItem> pageCandidates = new ArrayList<>();
+            List<String> pageVideoIds = new ArrayList<>();
+
             for (JsonNode item : root.path("items")) {
                 JsonNode snippet = item.path("snippet");
                 JsonNode resourceId = snippet.path("resourceId");
@@ -56,7 +64,19 @@ public class YouTubeService {
                 String channel = snippet.path("videoOwnerChannelTitle").asText();
                 String thumbnail = snippet.path("thumbnails").path("medium").path("url").asText();
 
-                videos.add(new VideoItem(videoId, title, channel, thumbnail));
+                pageCandidates.add(new VideoItem(videoId, title, channel, thumbnail));
+                pageVideoIds.add(videoId);
+            }
+
+            if (!pageVideoIds.isEmpty()) {
+                java.util.Set<String> playable = getPlayableVideoIds(pageVideoIds);
+                for (VideoItem v : pageCandidates) {
+                    if (playable.contains(v.getVideoId())) {
+                        videos.add(v);
+                    } else {
+                        hiddenCount++;
+                    }
+                }
             }
 
             JsonNode nextPage = root.path("nextPageToken");
@@ -64,7 +84,59 @@ public class YouTubeService {
 
         } while (pageToken != null);
 
-        return videos;
+        return new PlaylistResult(videos, hiddenCount);
+    }
+
+    private java.util.Set<String> getPlayableVideoIds(List<String> videoIds) {
+        java.util.Set<String> playable = new java.util.HashSet<>();
+        try {
+            String ids = String.join(",", videoIds);
+            String url = UriComponentsBuilder.fromHttpUrl(VIDEOS_URL)
+                .queryParam("part", "status,contentDetails")
+                .queryParam("id", ids)
+                .queryParam("key", apiKey)
+                .toUriString();
+
+            String response = restTemplate.getForObject(url, String.class);
+            JsonNode root = mapper.readTree(response);
+
+            for (JsonNode item : root.path("items")) {
+                JsonNode status = item.path("status");
+                boolean isPublic     = "public".equals(status.path("privacyStatus").asText());
+                boolean isEmbeddable = status.path("embeddable").asBoolean(false);
+
+                if (!isPublic || !isEmbeddable) continue;
+
+                if (isRegionBlocked(item.path("contentDetails"), "BR")) continue;
+
+                playable.add(item.path("id").asText());
+            }
+        } catch (Exception e) {
+            log.warn("Erro ao verificar status dos vídeos: {}", e.getMessage());
+        }
+        return playable;
+    }
+
+    private boolean isRegionBlocked(JsonNode contentDetails, String regionCode) {
+        JsonNode restriction = contentDetails.path("regionRestriction");
+        if (restriction.isMissingNode()) return false;
+
+        JsonNode blocked = restriction.path("blocked");
+        if (!blocked.isMissingNode()) {
+            for (JsonNode r : blocked) {
+                if (regionCode.equalsIgnoreCase(r.asText())) return true;
+            }
+        }
+
+        JsonNode allowed = restriction.path("allowed");
+        if (!allowed.isMissingNode()) {
+            for (JsonNode r : allowed) {
+                if (regionCode.equalsIgnoreCase(r.asText())) return false;
+            }
+            return true;
+        }
+
+        return false;
     }
 
     public String extractPlaylistId(String url) {
