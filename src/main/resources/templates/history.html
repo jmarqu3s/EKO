@@ -41,7 +41,8 @@
                                   th:text="${pl.videoCount + (pl.videoCount == 1 ? ' vídeo' : ' vídeos')}"></span>
                         </div>
                         <div class="history-card-info">
-                            <p class="history-card-label">Playlist</p>
+                            <p class="history-card-label"
+                               th:text="${savedPlaylistNames != null and savedPlaylistNames[pl.playlistId] != null ? savedPlaylistNames[pl.playlistId] : 'Playlist'}"></p>
                             <p class="history-card-date"
                                th:text="${#temporals.format(pl.accessedAt, 'dd/MM/yyyy HH:mm')}"></p>
                         </div>

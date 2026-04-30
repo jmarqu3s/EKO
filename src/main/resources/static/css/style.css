@@ -820,6 +820,196 @@ body {
     font-size: 0.85rem;
 }
 
+/* ── MODAL SALVAR PLAYLIST ── */
+.save-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 400;
+}
+
+.save-modal-overlay.open { display: block; }
+
+.save-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 1.5rem;
+    width: 320px;
+    z-index: 401;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+
+.save-modal.open { display: block; }
+
+.save-modal-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.save-modal-input {
+    width: 100%;
+    background: #0f0f0f;
+    border: 1px solid #2a2a2a;
+    border-radius: 3px;
+    color: #e0e0e0;
+    font-size: 0.85rem;
+    padding: 0.7rem 0.85rem;
+    outline: none;
+    margin-bottom: 1rem;
+    transition: border-color 0.15s;
+}
+
+.save-modal-input:focus { border-color: #444; }
+
+.save-modal-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.save-modal-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.save-modal-cancel {
+    background: #222;
+    color: #888;
+}
+
+.save-modal-cancel:hover { background: #2a2a2a; color: #ccc; }
+
+.save-modal-confirm {
+    background: #fff;
+    color: #000;
+}
+
+.save-modal-confirm:hover { background: #ddd; }
+
+/* ── PLAYLISTS SALVAS ── */
+.saved-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.saved-card {
+    position: relative;
+    background: #0f0f0f;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.saved-card:hover {
+    border-color: #2a2a2a;
+    background: #141414;
+}
+
+.saved-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.saved-card-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e0e0e0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.saved-card-options-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.7);
+    border: none;
+    color: #aaa;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+
+.saved-card-options-btn:hover {
+    background: rgba(30,30,30,0.95);
+    color: #fff;
+}
+
+.saved-card-menu {
+    display: none;
+    position: absolute;
+    bottom: calc(28px + 8px);
+    right: 8px;
+    background: #161616;
+    border: 1px solid #222;
+    border-radius: 4px;
+    min-width: 130px;
+    overflow: hidden;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+.saved-card-menu.open { display: block; }
+
+.saved-card-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.82rem;
+    color: #ccc;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.saved-card-menu-item:hover {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+.saved-card-menu-remove { color: #e07070; }
+.saved-card-menu-remove:hover { color: #ff8080; }
+
+.save-modal-remove {
+    background: #c0392b;
+    color: #fff;
+}
+
+.save-modal-remove:hover { background: #e74c3c; }
+
+.remove-confirm-msg {
+    font-size: 0.82rem;
+    color: #aaa;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
 /* ── ERRO ── */
 .error-message {
     text-align: center;

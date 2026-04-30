@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO — Playlists salvas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body class="history-page">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="history-container">
+        <h1 class="history-title">Playlists salvas</h1>
+
+        <div th:if="${savedPlaylists != null and !savedPlaylists.isEmpty()}"
+             class="saved-grid">
+            <div th:each="sp : ${savedPlaylists}"
+                 class="saved-card"
+                 th:data-id="${sp.id}"
+                 th:data-name="${sp.name}"
+                 th:data-playlist-id="${sp.playlistId}">
+                <a th:href="@{/playlist/{id}(id=${sp.playlistId})}" class="saved-card-link">
+                    <div class="history-card-thumb-wrap">
+                        <img th:src="${sp.thumbnailUrl}" alt="" class="history-card-thumb">
+                        <span class="history-card-badge"
+                              th:text="${sp.videoCount + (sp.videoCount == 1 ? ' vídeo' : ' vídeos')}"></span>
+                    </div>
+                    <div class="history-card-info">
+                        <p class="saved-card-name" th:text="${sp.name}"></p>
+                        <p class="history-card-date"
+                           th:text="${#temporals.format(sp.savedAt, 'dd/MM/yyyy HH:mm')}"></p>
+                    </div>
+                </a>
+                <button class="saved-card-options-btn" onclick="toggleCardMenu(event, this)" title="Opções">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <circle cx="12" cy="5" r="1.8"/>
+                        <circle cx="12" cy="12" r="1.8"/>
+                        <circle cx="12" cy="19" r="1.8"/>
+                    </svg>
+                </button>
+                <div class="saved-card-menu">
+                    <button class="saved-card-menu-item" onclick="openEditModal(this)">Editar</button>
+                    <button class="saved-card-menu-item saved-card-menu-remove" onclick="openRemoveConfirm(this)">Remover</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-empty"
+             th:if="${savedPlaylists == null or savedPlaylists.isEmpty()}">
+            <p>Nenhuma playlist salva ainda.</p>
+            <a href="/">Começar a assistir</a>
+        </div>
+    </div>
+
+    <!-- Modal editar nome -->
+    <div class="save-modal-overlay" id="edit-modal-overlay" onclick="closeEditModal()"></div>
+    <div class="save-modal" id="edit-modal">
+        <p class="save-modal-title">Editar nome</p>
+        <input type="text" class="save-modal-input" id="edit-modal-input"
+               maxlength="80" onkeydown="if(event.key==='Enter') confirmEdit()">
+        <div class="save-modal-actions">
+            <button class="save-modal-btn save-modal-cancel" onclick="closeEditModal()">Cancelar</button>
+            <button class="save-modal-btn save-modal-confirm" onclick="confirmEdit()">Salvar</button>
+        </div>
+    </div>
+
+    <!-- Confirmação de remoção -->
+    <div class="save-modal-overlay" id="remove-confirm-overlay" onclick="closeRemoveConfirm()"></div>
+    <div class="save-modal" id="remove-confirm-modal">
+        <p class="save-modal-title">Remover playlist</p>
+        <p class="remove-confirm-msg" id="remove-confirm-msg"></p>
+        <div class="save-modal-actions">
+            <button class="save-modal-btn save-modal-cancel" onclick="closeRemoveConfirm()">Cancelar</button>
+            <button class="save-modal-btn save-modal-remove" onclick="confirmRemove()">Remover</button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let activeCard = null;
+
+        function getCsrfHeaders() {
+            const csrfMeta = document.querySelector('meta[name="_csrf"]');
+            const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+            const headers = { 'Content-Type': 'application/json' };
+            if (csrfMeta && csrfHeaderMeta) headers[csrfHeaderMeta.content] = csrfMeta.content;
+            return headers;
+        }
+
+        function toggleCardMenu(e, btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = btn.closest('.saved-card');
+            const menu = card.querySelector('.saved-card-menu');
+            const isOpen = menu.classList.contains('open');
+            closeAllMenus();
+            if (!isOpen) menu.classList.add('open');
+        }
+
+        function closeAllMenus() {
+            document.querySelectorAll('.saved-card-menu.open').forEach(m => m.classList.remove('open'));
+        }
+
+        document.addEventListener('click', closeAllMenus);
+
+        /* ── EDITAR ── */
+        function openEditModal(btn) {
+            closeAllMenus();
+            activeCard = btn.closest('.saved-card');
+            const input = document.getElementById('edit-modal-input');
+            input.value = activeCard.dataset.name;
+            document.getElementById('edit-modal-overlay').classList.add('open');
+            document.getElementById('edit-modal').classList.add('open');
+            setTimeout(() => { input.focus(); input.select(); }, 50);
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal-overlay').classList.remove('open');
+            document.getElementById('edit-modal').classList.remove('open');
+            activeCard = null;
+        }
+
+        function confirmEdit() {
+            const name = document.getElementById('edit-modal-input').value.trim();
+            if (!name || !activeCard) return;
+            const id = activeCard.dataset.id;
+            const playlistId = activeCard.dataset.playlistId;
+            const thumb = activeCard.querySelector('.history-card-thumb').src;
+            const videoCount = parseInt(activeCard.querySelector('.history-card-badge').textContent);
+
+            fetch('/playlist/save', {
+                method: 'POST',
+                headers: getCsrfHeaders(),
+                body: JSON.stringify({ playlistId, name, thumbnailUrl: thumb, videoCount: isNaN(videoCount) ? 0 : videoCount })
+            })
+            .then(r => r.json())
+            .then(data => {
+                activeCard.dataset.name = data.name;
+                activeCard.querySelector('.saved-card-name').textContent = data.name;
+                closeEditModal();
+            });
+        }
+
+        /* ── REMOVER ── */
+        function openRemoveConfirm(btn) {
+            closeAllMenus();
+            activeCard = btn.closest('.saved-card');
+            document.getElementById('remove-confirm-msg').textContent =
+                'Remover "' + activeCard.dataset.name + '" das playlists salvas?';
+            document.getElementById('remove-confirm-overlay').classList.add('open');
+            document.getElementById('remove-confirm-modal').classList.add('open');
+        }
+
+        function closeRemoveConfirm() {
+            document.getElementById('remove-confirm-overlay').classList.remove('open');
+            document.getElementById('remove-confirm-modal').classList.remove('open');
+            activeCard = null;
+        }
+
+        function confirmRemove() {
+            if (!activeCard) return;
+            const id = activeCard.dataset.id;
+            const card = activeCard;
+            closeRemoveConfirm();
+
+            fetch('/playlist/saved/' + id, { method: 'DELETE', headers: getCsrfHeaders() })
+                .then(r => { if (r.ok) card.remove(); });
+        }
+    </script>
+
+</body>
+</html>

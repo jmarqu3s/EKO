@@ -238,6 +238,45 @@ function syncPlaylist() {
     .catch(() => showToast('Erro ao sincronizar a playlist'));
 }
 
+function openSaveModal() {
+    document.getElementById('bar-options-menu').classList.remove('open');
+    const input = document.getElementById('save-modal-input');
+    input.value = '';
+    document.getElementById('save-modal-overlay').classList.add('open');
+    document.getElementById('save-modal').classList.add('open');
+    setTimeout(() => input.focus(), 50);
+}
+
+function closeSaveModal() {
+    document.getElementById('save-modal-overlay').classList.remove('open');
+    document.getElementById('save-modal').classList.remove('open');
+}
+
+function confirmSavePlaylist() {
+    const name = document.getElementById('save-modal-input').value.trim();
+    if (!name) return;
+
+    const playlistId = document.getElementById('app').dataset.playlistId;
+    const thumb = videosData.length > 0 ? videosData[0].thumb : '';
+
+    const csrfMeta = document.querySelector('meta[name="_csrf"]');
+    const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+    const headers = { 'Content-Type': 'application/json' };
+    if (csrfMeta && csrfHeaderMeta) headers[csrfHeaderMeta.content] = csrfMeta.content;
+
+    fetch('/playlist/save', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ playlistId, name, thumbnailUrl: thumb, videoCount: videosData.length })
+    })
+    .then(r => r.json())
+    .then(data => {
+        closeSaveModal();
+        showToast('Playlist salva como "' + data.name + '"');
+    })
+    .catch(() => showToast('Erro ao salvar a playlist'));
+}
+
 let toastTimer;
 function showToast(msg) {
     const toast = document.getElementById('sync-toast');
@@ -246,6 +285,23 @@ function showToast(msg) {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('visible'), 3500);
 }
+
+document.addEventListener('keydown', function(e) {
+    if (!player || typeof player.getPlayerState !== 'function') return;
+    const tag = document.activeElement.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+    } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        player.seekTo(player.getCurrentTime() + 10, true);
+    } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        player.seekTo(Math.max(0, player.getCurrentTime() - 10), true);
+    }
+});
 
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
