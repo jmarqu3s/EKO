@@ -330,8 +330,75 @@ body {
     transform: scale(1.05);
 }
 
-/* Lado direito (reservado) */
-.bar-right { width: 280px; }
+/* Lado direito */
+.bar-right {
+    width: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Menu de opções */
+.bar-options-wrap {
+    position: relative;
+}
+
+.bar-options-menu {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    background: #161616;
+    border: 1px solid #222;
+    border-radius: 4px;
+    min-width: 170px;
+    overflow: hidden;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.5);
+}
+
+.bar-options-menu.open { display: block; }
+
+.bar-options-item {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    color: #ccc;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.bar-options-item:hover {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+/* Toast de sincronização */
+.sync-toast {
+    position: fixed;
+    bottom: 96px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #ccc;
+    font-size: 0.82rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 300;
+}
+
+.sync-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
 
 /* ── NAVBAR ── */
 .navbar {

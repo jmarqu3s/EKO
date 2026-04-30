@@ -181,6 +181,72 @@ function toggleShuffle() {
     }
 }
 
+function toggleOptionsMenu() {
+    document.getElementById('bar-options-menu').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+    var btn  = document.getElementById('btn-options');
+    var menu = document.getElementById('bar-options-menu');
+    if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove('open');
+    }
+});
+
+function syncPlaylist() {
+    document.getElementById('bar-options-menu').classList.remove('open');
+
+    const playlistId = document.getElementById('app').dataset.playlistId;
+    const currentIds = videosData.map(v => v.videoId);
+
+    const csrfMeta = document.querySelector('meta[name="_csrf"]');
+    const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+    const headers = { 'Content-Type': 'application/json' };
+    if (csrfMeta && csrfHeaderMeta) headers[csrfHeaderMeta.content] = csrfMeta.content;
+
+    fetch('/playlist/' + playlistId + '/sync', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ currentIds: currentIds })
+    })
+    .then(r => r.json())
+    .then(data => {
+        const mapped = data.videos.map((v, i) => ({
+            videoId: v.videoId,
+            title: v.title,
+            channel: v.channelTitle,
+            thumb: v.thumbnailUrl,
+            index: i
+        }));
+        renderTrackList(mapped);
+        originalData = [...mapped];
+
+        const added   = data.added   || 0;
+        const removed = data.removed || 0;
+        let msg;
+        if (added > 0 && removed > 0) {
+            msg = 'Playlist sincronizada · ' + added + ' adicionada(s), ' + removed + ' removida(s)';
+        } else if (added > 0) {
+            msg = 'Playlist sincronizada · ' + added + ' música(s) adicionada(s)';
+        } else if (removed > 0) {
+            msg = 'Playlist sincronizada · ' + removed + ' música(s) removida(s)';
+        } else {
+            msg = 'Playlist sincronizada · Nenhuma alteração encontrada';
+        }
+        showToast(msg);
+    })
+    .catch(() => showToast('Erro ao sincronizar a playlist'));
+}
+
+let toastTimer;
+function showToast(msg) {
+    const toast = document.getElementById('sync-toast');
+    toast.textContent = msg;
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('visible'), 3500);
+}
+
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
         setPlayIcon(true);
