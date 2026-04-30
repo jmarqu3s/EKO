@@ -15,42 +15,74 @@
 
         <!-- Playlists -->
         <section class="history-section" th:if="${playlists != null and !playlists.isEmpty()}">
-            <h2 class="history-section-title">Playlists</h2>
-            <div class="history-grid">
-                <a th:each="pl : ${playlists}"
-                   th:href="@{/playlist/{id}(id=${pl.playlistId})}"
-                   class="history-card">
-                    <div class="history-card-thumb-wrap">
-                        <img th:src="${pl.thumbnailUrl}" alt="" class="history-card-thumb">
-                        <span class="history-card-badge"
-                              th:text="${pl.videoCount + (pl.videoCount == 1 ? ' vídeo' : ' vídeos')}"></span>
-                    </div>
-                    <div class="history-card-info">
-                        <p class="history-card-label">Playlist</p>
-                        <p class="history-card-date"
-                           th:text="${#temporals.format(pl.accessedAt, 'dd/MM/yyyy HH:mm')}"></p>
-                    </div>
-                </a>
+            <div class="carousel-header">
+                <h2 class="history-section-title">Playlists</h2>
+                <div class="carousel-arrows">
+                    <button class="carousel-arrow" id="arrow-playlists-prev" onclick="carouselPrev('playlists')" disabled>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                            <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
+                        </svg>
+                    </button>
+                    <button class="carousel-arrow" id="arrow-playlists-next" onclick="carouselNext('playlists')">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="carousel-viewport">
+                <div class="carousel-track" id="track-playlists">
+                    <a th:each="pl : ${playlists}"
+                       th:href="@{/playlist/{id}(id=${pl.playlistId})}"
+                       class="history-card">
+                        <div class="history-card-thumb-wrap">
+                            <img th:src="${pl.thumbnailUrl}" alt="" class="history-card-thumb">
+                            <span class="history-card-badge"
+                                  th:text="${pl.videoCount + (pl.videoCount == 1 ? ' vídeo' : ' vídeos')}"></span>
+                        </div>
+                        <div class="history-card-info">
+                            <p class="history-card-label">Playlist</p>
+                            <p class="history-card-date"
+                               th:text="${#temporals.format(pl.accessedAt, 'dd/MM/yyyy HH:mm')}"></p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </section>
 
         <!-- Vídeos -->
         <section class="history-section" th:if="${videos != null and !videos.isEmpty()}">
-            <h2 class="history-section-title">Vídeos</h2>
-            <div class="history-grid">
-                <a th:each="v : ${videos}"
-                   th:href="@{/watch(v=${v.videoId})}"
-                   class="history-card">
-                    <div class="history-card-thumb-wrap">
-                        <img th:src="${v.thumbnailUrl}" th:alt="${v.title}" class="history-card-thumb">
-                    </div>
-                    <div class="history-card-info">
-                        <p class="history-card-title" th:text="${v.title}"></p>
-                        <p class="history-card-channel" th:text="${v.channelTitle}"></p>
-                        <p class="history-card-date"
-                           th:text="${#temporals.format(v.watchedAt, 'dd/MM/yyyy HH:mm')}"></p>
-                    </div>
-                </a>
+            <div class="carousel-header">
+                <h2 class="history-section-title">Vídeos</h2>
+                <div class="carousel-arrows">
+                    <button class="carousel-arrow" id="arrow-videos-prev" onclick="carouselPrev('videos')" disabled>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                            <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
+                        </svg>
+                    </button>
+                    <button class="carousel-arrow" id="arrow-videos-next" onclick="carouselNext('videos')">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="carousel-viewport">
+                <div class="carousel-track" id="track-videos">
+                    <a th:each="v : ${videos}"
+                       th:href="@{/watch(v=${v.videoId})}"
+                       class="history-card">
+                        <div class="history-card-thumb-wrap">
+                            <img th:src="${v.thumbnailUrl}" th:alt="${v.title}" class="history-card-thumb">
+                        </div>
+                        <div class="history-card-info">
+                            <p class="history-card-title" th:text="${v.title}"></p>
+                            <p class="history-card-channel" th:text="${v.channelTitle}"></p>
+                            <p class="history-card-date"
+                               th:text="${#temporals.format(v.watchedAt, 'dd/MM/yyyy HH:mm')}"></p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -61,6 +93,8 @@
             <a href="/">Começar a assistir</a>
         </div>
     </div>
+
+    <script th:src="@{/js/history.js}"></script>
 
 </body>
 </html>
