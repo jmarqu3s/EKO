@@ -109,8 +109,7 @@ body {
     display: flex;
     flex: 1;
     overflow: hidden;
-    /* deixa espaço para a barra de 72px */
-    padding-bottom: 72px;
+    padding-bottom: 88px;
 }
 
 /* ── SEÇÃO DO VÍDEO ── */
@@ -160,6 +159,27 @@ body {
     letter-spacing: 1px;
 }
 
+.queue-search {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #161616;
+    flex-shrink: 0;
+}
+
+.queue-search-input {
+    width: 100%;
+    background: #161616;
+    border: 1px solid #1e1e1e;
+    border-radius: 3px;
+    color: #aaa;
+    font-size: 0.78rem;
+    padding: 0.45rem 0.75rem;
+    outline: none;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.queue-search-input::placeholder { color: #333; }
+.queue-search-input:focus { border-color: #2a2a2a; color: #e0e0e0; }
+
 .track-list {
     list-style: none;
     overflow-y: auto;
@@ -204,7 +224,7 @@ body {
     flex-shrink: 0;
 }
 
-.track-info { flex: 1; min-width: 0; }
+.track-info { flex: 1; min-width: 0; overflow: hidden; }
 
 .track-title {
     font-size: 0.85rem;
@@ -215,6 +235,20 @@ body {
     text-overflow: ellipsis;
 }
 
+.track-item.title-scrolling .track-title {
+    overflow: visible;
+    text-overflow: clip;
+    animation: titleScroll var(--title-scroll-dur, 5s) linear forwards;
+}
+
+@keyframes titleScroll {
+    0%   { transform: translateX(0); }
+    10%  { transform: translateX(0); }
+    80%  { transform: translateX(var(--title-scroll-dist, 0px)); }
+    90%  { transform: translateX(var(--title-scroll-dist, 0px)); }
+    100% { transform: translateX(0); }
+}
+
 .track-channel {
     font-size: 0.72rem;
     color: #3a3a3a;
@@ -223,6 +257,26 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* ── BOTÃO REMOVER FAIXA ── */
+.track-remove-btn {
+    background: transparent;
+    border: none;
+    color: #2a2a2a;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.15s, background 0.15s;
+    opacity: 0;
+}
+
+.track-item:hover .track-remove-btn { opacity: 1; color: #666; }
+.track-remove-btn:hover { color: #fff !important; background: #2a2a2a; }
+
 
 /* ── VÍDEOS OCULTOS ── */
 .hidden-count-msg {
@@ -240,14 +294,71 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 72px;
+    height: 88px;
     background: #111;
     border-top: 1px solid #1e1e1e;
     display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 8px 1.5rem 0;
+    width: 100%;
+}
+
+.progress-time {
+    font-size: 0.68rem;
+    color: #444;
+    min-width: 32px;
+    flex-shrink: 0;
+}
+
+#time-total { text-align: right; }
+
+.progress-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: #2a2a2a;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: height 0.15s;
+}
+
+.progress-bar-wrap:hover { height: 5px; }
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: width 0.25s linear;
+    position: relative;
+}
+
+.progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.controls-row {
+    display: flex;
     align-items: center;
     justify-content: space-between;
+    flex: 1;
     padding: 0 1.5rem;
-    z-index: 100;
 }
 
 /* Info da música */
